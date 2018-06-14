@@ -1,0 +1,68 @@
+version: '2'
+
+services:
+  proxy:
+    build: nginx/
+    container_name: "nginx"
+    ports:
+      - "80:80"
+    networks:
+      - local
+    restart: always
+
+  portainer:
+    image: portainer/portainer
+    container_name: "portainer"
+    # ports: 
+      # - "9000:9000"
+    networks:
+      - local
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    restart: always
+
+  jenkins:
+    image: jenkins/jenkins:2.126
+    container_name: "jenkins"
+    ports:
+      # - "8080:8080"
+      - "50000:50000"
+    networks: 
+      - local
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - jenkins_data:/var/jenkins_home
+    restart: always
+    environment:
+      - JENKINS_OPTS="--prefix=/jenkins"
+
+  gitlabce:
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlabce
+    restart: always
+    hostname: gitlabce
+    networks: 
+      - local
+    ports:
+     # - "8000:80"
+     # - "8443:443"
+     - "8022:22"
+    volumes:
+      - gitlab_config:/etc/gitlab
+      - gitlab_logs:/var/log/gitlab
+      - gitlab_data:/var/opt/gitlab
+      
+
+networks:
+  local:
+    driver: bridge
+
+volumes:
+    portainer_data: 
+        external: true
+    jenkins_data:
+        external: true
+    gitlab_data:
+    gitlab_config:
+    gitlab_logs:
