@@ -4,7 +4,7 @@
 
 ```mermaid
 graph LR;
-    A-->B;
+    A-->|Label text/|B;
     B-->C;
     C-->D;
 ```
